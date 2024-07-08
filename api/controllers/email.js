@@ -23,6 +23,19 @@ export async function getAllEmails(request, response, next) {
 export async function sendEmail(request, response, next) {
   try {
     // validate data types
+    
+    const emailtext = `Subject: Resumption of Services on ${new Date()}
+
+                    Dear Sir/Madam,
+
+                    We are writing to inform you that our services will resume on [date of resumption].
+
+                    During our closure period, we ensured that all urgent requests were addressed promptly. If you have sent any correspondence or requests, please be assured that we will respond to them upon our return.
+
+                    We appreciate your patience and understanding. We remain at your disposal for any further questions or requests and are committed to continuing to provide you with high-quality service from that date onwards.
+
+                `
+
     const validationErrors = validationResult(request);
     if (!validationErrors.isEmpty())
       return response.status(400).json({
@@ -38,31 +51,10 @@ export async function sendEmail(request, response, next) {
       message: request.body.message,
     });
 
-    const newEmailOutIn = new Email({
-      from: request.body.to,
-      to: request.body.from,
-      subject: request.body.subject,
-      message: request.body.message,
-    });
 
     // save outgoing email
     const savedEmailOut = await newEmailOut.save();
-
-    // // generate a random reply email
-    // const newEmailIn = new Email({
-    //   from: request.body.to,
-    //   to: request.body.from,
-    //   subject: 'Re: ' + request.body.subject,
-    //   message: txtgen.paragraph(),
-    // });
-
-    // // save random reply email
-    // const savedEmailIn = await newEmailIn.save();
-
-    // console.log('888888888888888888888888888888888888888888888888888888888888888888')
-    // console.log('Reply received --------------------', savedEmailIn);
-    // console.log('******************************************************************')
-
+    console.log('Email sent', savedEmailOut);
 
     response
       .status(201)
@@ -72,14 +64,46 @@ export async function sendEmail(request, response, next) {
     const foundAccount = await Account.findOne({ _id: request.user });
     const foundAccountReceiver = await Account.findOne({email : request.body.to})
 
-    console.log('foundAccountReceiverfoundAccountReceiver', foundAccountReceiver)
+    console.log('foundAccountReceiver.Accountactivate',foundAccountReceiver.Accountactivate ,request.body.to )
 
-    foundAccount.mailbox.outbox.push(savedEmailOut._id);
-    foundAccountReceiver.mailbox.inbox.push(savedEmailOut._id);
-    
-    console.log('id email')
-    await foundAccount.save();
-    await foundAccountReceiver.save();
+    if(foundAccountReceiver.Accountactivate){
+      console.log('foundAccountReceiverfoundAccountReceiver', foundAccountReceiver)
+
+      foundAccount.mailbox.outbox.push(savedEmailOut._id);
+      foundAccountReceiver.mailbox.inbox.push(savedEmailOut._id);
+      
+      await foundAccount.save();
+      await foundAccountReceiver.save();
+      
+    }else{
+
+      const newEmailOut = new Email({
+        from: request.body.from,
+        to: request.body.to,
+        autoreply: true,
+        subject: request.body.subject ,
+        message: `RESPONSE :` + emailtext,
+      });
+
+      const savedEmailOutReply = await newEmailOut.save();
+
+      
+      console.log('foundAccountReceiverfoundAccountReceiver', foundAccountReceiver)
+      console.log('newEmailOut',savedEmailOutReply)
+
+      foundAccount.mailbox.outbox.push(savedEmailOutReply._id);
+      foundAccountReceiver.mailbox.inbox.push(savedEmailOutReply._id);
+      
+      console.log('foundAccountReceiver.mailbox.inbox', foundAccountReceiver.mailbox.inbox)
+
+      await foundAccount.save();
+
+      await foundAccountReceiver.save();
+      
+      console.log('foundAccountReceiver.mailbox.inbox', foundAccountReceiver.mailbox.inbox)
+
+
+    }
 
   } catch (error) {
     console.log(error);

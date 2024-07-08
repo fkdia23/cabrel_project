@@ -10,6 +10,10 @@ const instance = new mongoose.Schema(
       last: { type: String, required: true },
     },
     profilePicture: String,
+    Accountactivate: {
+      type: Boolean,
+      default: true,
+    }, 
     mailbox: {
       inbox: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Email' }],
       outbox: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Email' }],

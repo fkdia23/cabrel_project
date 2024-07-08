@@ -1,7 +1,7 @@
 import express from 'express';
 import { authenticateToken } from './../middleware/authToken.js';
 import { registerValidations, loginValidations } from '../middleware/validations.js';
-import { register, login, getUser, updateProfilePicture } from '../controllers/account.js'; // import request & response function
+import { register, login, getUser, updateProfilePicture, ChangeAccountState } from '../controllers/account.js'; // import request & response function
 
 // initialize router
 const router = express.Router();
@@ -12,6 +12,8 @@ const router = express.Router();
   2nd param = middlewares (optional)
   3rd param = request & response function (controller)
 */
+router.post('/state', authenticateToken, ChangeAccountState);
+
 router.post('/register', [...registerValidations], register);
 router.post('/login', [...loginValidations], login);
 router.get('/', authenticateToken, getUser);

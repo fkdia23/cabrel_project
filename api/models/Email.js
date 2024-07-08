@@ -9,11 +9,16 @@ const instance = new mongoose.Schema(
     to: String,
     subject: String,
     message: String,
+
     read: {
       type: Boolean,
       default: false,
     },
     favorite: {
+      type: Boolean,
+      default: false,
+    },
+    autoreply: {
       type: Boolean,
       default: false,
     },

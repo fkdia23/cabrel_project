@@ -53,6 +53,30 @@ export async function register(request, response, next) {
   }
 }
 
+export async function ChangeAccountState(request, response, next) {
+  try {
+    console.log('request', request.body , request.user)
+
+
+    const validationErrors = validationResult(request);
+    if (!validationErrors.isEmpty())
+      return response.status(400).json({
+        message: 'Invalid data, see response.data.errors for more information',
+        errors: validationErrors.errors,
+      });
+
+      const foundAccount = await Account.findOneAndUpdate({_id:request.user},{$set:{Accountactivate: request.body.state}})
+      
+      console.log('found account', foundAccount)
+      await foundAccount.save()
+      response.status(200).json({ message: 'Account update', account: foundAccount });
+
+  } catch (error) {
+    console.log(error);
+    response.status(500);
+  }
+}
+
 export async function login(request, response, next) {
   try {
     // validate data types
@@ -65,6 +89,7 @@ export async function login(request, response, next) {
 
     // find user by email
     const foundAccount = await Account.findOne({ email: request.body.email });
+    
     if (!foundAccount) return response.status(401).json({ message: 'Bad credentials' });
 
     // decrypt & compare password
