@@ -18,6 +18,8 @@ export const uploadImage = (token, image) =>
 // email routes
 export const getAllEmails = (token) => axios.get(`${url}/email`, headers(token));
 export const sendEmail = (token, form) => axios.post(`${url}/email/send`, form, headers(token));
+export const changeAccountState = (token, form) => axios.post(`${url}/account/state`, form, headers(token));
+
 export const saveDraft = (token, form) => axios.post(`${url}/email/draft`, form, headers(token));
 export const updateDraft = (token, id, form) =>
   axios.put(`${url}/email/draft/${id}`, form, headers(token));

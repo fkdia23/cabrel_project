@@ -23,6 +23,7 @@ import {
   DELETE_EMAIL_REQUEST,
   DELETE_EMAIL_SUCCESS,
   DELETE_EMAIL_ERROR,
+  SEND_ACCOUNT_REQUEST,
 } from './../constants';
 import {
   getAllEmails,
@@ -36,6 +37,7 @@ import {
   setFavorite,
   unsetFavorite,
   deleteEmail,
+  changeAccountState,
 } from '../../api';
 
 export const getEmailsAction = () => async (dispatch, getState) => {
@@ -61,12 +63,28 @@ export const sendEmailAction = (form) => async (dispatch, getState) => {
   }
 };
 
+export const AccountStateAction = (form) => async (dispatch, getState) => {
+  dispatch({ type: SEND_ACCOUNT_REQUEST });
+  try {
+    const response = await changeAccountState(getState().userReducer.token, form);
+    dispatch({
+      type: SEND_ACCOUNT_REQUEST,
+      payload: {account : response.data.account },
+    });
+  } catch (error) {
+    console.log('error -----', error)
+    dispatch({ type: SEND_ACCOUNT_REQUEST, error });
+  }
+};
+
+
 export const saveDraftAction = (form) => async (dispatch, getState) => {
   dispatch({ type: SAVE_DRAFT_REQUEST });
   try {
     const response = await saveDraft(getState().userReducer.token, form);
     dispatch({ type: SAVE_DRAFT_SUCCESS, payload: response.data.draft });
   } catch (error) {
+
     dispatch({ type: SAVE_DRAFT_ERROR, error });
   }
 };

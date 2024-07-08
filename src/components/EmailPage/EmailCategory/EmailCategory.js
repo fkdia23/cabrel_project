@@ -38,6 +38,7 @@ export default function EmailCategory({ inbox, sent, drafts, starred, trash, tog
                 date={item.createdAt}
                 isRead={item.read}
                 isStarred={item.favorite}
+                autoreply ={item.autoreply}
               />
             ))}
           </Fragment>

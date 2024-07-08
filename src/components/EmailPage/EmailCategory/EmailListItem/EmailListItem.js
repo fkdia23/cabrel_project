@@ -1,6 +1,7 @@
 import { useHistory, useParams } from 'react-router-dom';
 import styles from './styles/EmailListItem.module.css';
 import { Delete, MarkStar, SelectOne } from '../../EmailOptions/EmailOptions';
+import { Chip } from '@material-ui/core';
 
 export default function EmailCategoryItem({
   id,
@@ -13,6 +14,7 @@ export default function EmailCategoryItem({
   isTrash,
   isDraft,
   toggleIsCompose,
+  autoreply
 }) {
   const history = useHistory();
   const { category } = useParams();
@@ -70,6 +72,10 @@ export default function EmailCategoryItem({
           {message}
         </p>
         &nbsp;&nbsp;
+        {autoreply &&  <Chip label='auto reply' style={{
+          backgroundColor: 'red',
+          color: 'white'
+        }}/> }
         <span>{dateToString(date)}</span>
       </div>
     </div>
