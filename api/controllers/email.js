@@ -47,7 +47,6 @@ export async function sendEmail(request, response, next) {
 
     // save outgoing email
     const savedEmailOut = await newEmailOut.save();
-    console.log('Email sent', savedEmailOut);
 
     // // generate a random reply email
     // const newEmailIn = new Email({
